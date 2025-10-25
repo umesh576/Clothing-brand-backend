@@ -46,6 +46,10 @@ const userSchema = new mongoose.Schema(
       max: [100, "Location cannot exceed 50 characters."],
       trim: true,
     },
+    profielPicture: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );
