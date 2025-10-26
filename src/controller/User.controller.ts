@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import User from "../model/User.model";
 import { comparePassword, hashPassword } from "../middleware/bcrypt.middleware";
+import { generateToken } from "../middleware/jwtToken.middleware";
+import { IPayload } from "../@types/user.types";
+
 export const RegisterUser = async (req: Request, res: Response) => {
   const body = req.body;
   console.log("body", body);
@@ -42,14 +45,16 @@ export const LoginUser = async (req: Request, res: Response) => {
   if (!passwordIsValid) {
     return res.status(401).send("Invalid password.");
   }
-  res
-    .status(200)
-    .json({
-      message: "Login successful",
-      status: "sucess",
-      statusCode: 200,
-      data: user,
-    });
+
+  const payLoad: IPayload = { id: user._id, email: user.email };
+  const token = generateToken(payLoad);
+  res.status(200).json({
+    message: "Login successful",
+    status: "sucess",
+    statusCode: 200,
+    data: user,
+    token,
+  });
 };
 
 export const getAllUsers = async (req: Request, res: Response) => {
