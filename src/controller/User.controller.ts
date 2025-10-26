@@ -63,6 +63,7 @@ export const LoginUser = async (req: Request, res: Response) => {
     });
 };
 
+// working on this function
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
