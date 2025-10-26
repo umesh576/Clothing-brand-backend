@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import User from "../model/User.model";
-import { hashPassword } from "../middleware/bcrypt.middleware";
+import { comparePassword, hashPassword } from "../middleware/bcrypt.middleware";
 export const RegisterUser = async (req: Request, res: Response) => {
   const body = req.body;
   console.log("body", body);
@@ -23,4 +23,40 @@ export const RegisterUser = async (req: Request, res: Response) => {
     message: "User registered successfully",
     user,
   });
+};
+
+export const LoginUser = async (req: Request, res: Response) => {
+  // Login logic will be implemented here in the future
+  const body = req.body;
+  if (!body.email || !body.password) {
+    return res.status(400).send("Email and password are required.");
+  }
+
+  const user = await User.findOne({ email: body.email });
+  if (!user) {
+    return res.status(404).send("User not found.");
+  }
+  // Password verification logic will be added here
+  const passwordIsValid = await comparePassword(body.password, user.password); // Placeholder for actual password validation
+
+  if (!passwordIsValid) {
+    return res.status(401).send("Invalid password.");
+  }
+  res
+    .status(200)
+    .json({
+      message: "Login successful",
+      status: "sucess",
+      statusCode: 200,
+      data: user,
+    });
+};
+
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find();
+    res.status(200).json({ users });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
 };
