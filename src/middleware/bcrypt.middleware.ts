@@ -1,4 +1,6 @@
+import bcrypt from "bcrypt";
+
 export const hashPassword = (password: string): string => {
-  // Placeholder for password hashing logic
-  return `hashed_${password}`;
+  const hashedPassword = bcrypt.hashSync(password, 10);
+  return hashedPassword;
 };

@@ -1,11 +1,20 @@
 import { Request, Response } from "express";
 import User from "../model/User.model";
+import { hashPassword } from "../middleware/bcrypt.middleware";
 export const RegisterUser = async (req: Request, res: Response) => {
   const body = req.body;
   console.log("body", body);
   // Registration logic will be implemented here in the future
   if (!body.firstName || !body.lastName || !body.email || !body.password) {
     return res.status(400).send("All required fields must be filled.");
+  }
+
+  const password = hashPassword(body.password);
+  body.password = password;
+
+  const isUserExist = await User.findOne({ email: body.email });
+  if (isUserExist) {
+    return res.status(409).send("User with this email already exists.");
   }
 
   const user = await User.create(body);
