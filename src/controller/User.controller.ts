@@ -66,7 +66,18 @@ export const LoginUser = async (req: Request, res: Response) => {
 // working on this function
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const users = await User.find();
+    const queryParams = req.query.q;
+    // You can use queryParams to filter users if needed
+    const filter: any = {};
+    if (queryParams) {
+      filter.$or = [
+        { firstName: { $regex: queryParams as string, $options: "i" } },
+        { lastName: { $regex: queryParams as string, $options: "i" } },
+        { email: { $regex: queryParams as string, $options: "i" } },
+      ];
+    }
+
+    const users = await User.find(filter); // Example: Fetch all users from the database
     res.status(200).json({ users });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
@@ -89,10 +100,35 @@ export const getUserById = async (req: Request, res: Response) => {
 export const deleteUserById = async (req: Request, res: Response) => {
   try {
     const userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
     const user = await User.findByIdAndDelete(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    res.status(200).json({ message: "User deleted successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error });
+  }
+};
+
+export const UpdateUserById = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+    const updateData = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const user = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User updated successfully", user });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
   }
