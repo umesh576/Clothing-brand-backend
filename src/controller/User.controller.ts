@@ -66,18 +66,22 @@ export const LoginUser = async (req: Request, res: Response) => {
 // working on this function
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
-    const queryParams = req.query.q;
+    const { query, limit = 1, page = 1 } = req.query;
     // You can use queryParams to filter users if needed
     const filter: any = {};
-    if (queryParams) {
+    if (query) {
       filter.$or = [
-        { firstName: { $regex: queryParams as string, $options: "i" } },
-        { lastName: { $regex: queryParams as string, $options: "i" } },
-        { email: { $regex: queryParams as string, $options: "i" } },
+        { firstName: { $regex: query as string, $options: "i" } },
+        { lastName: { $regex: query as string, $options: "i" } },
+        { email: { $regex: query as string, $options: "i" } },
+        { category: { $regex: query as string, $options: "i" } },
+        { role: { $regex: query as string, $options: "i" } },
       ];
     }
 
-    const users = await User.find(filter); // Example: Fetch all users from the database
+    const users = await User.find(filter)
+      .skip((Number(page) - 1) * Number(limit))
+      .limit(Number(limit)); // Example: Fetch all users from the database
     res.status(200).json({ users });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
