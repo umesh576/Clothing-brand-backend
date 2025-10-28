@@ -15,7 +15,7 @@ const clothsSchema = new mongoose.Schema({
   },
 
   size: { type: "string", required: [true, "Size must be required."] },
-  color: [{ type: "string", required: true, trim: true }],
+  color: { type: "string", required: true, trim: true },
   price: { type: "number", required: true },
   totalPrice: { type: "number" },
   disCount: { type: "number", required: true },

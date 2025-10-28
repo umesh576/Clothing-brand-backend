@@ -15,7 +15,7 @@ const CategorySchema = new mongoose.Schema(
     clothes: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Cloth",
+        ref: "Clothes",
       },
     ],
   },
