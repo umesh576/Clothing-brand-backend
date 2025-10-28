@@ -12,6 +12,12 @@ const CategorySchema = new mongoose.Schema(
     description: {
       type: String,
     },
+    clothes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Cloth",
+      },
+    ],
   },
   {
     timestamps: true,

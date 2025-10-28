@@ -1,21 +1,35 @@
 import { Request, Response } from "express";
-import Category from "../model/ClothCategory.model";
 import customError from "../middleware/customError.middleware";
+import Clothes from "../model/Clothes.model";
 
-export const CreateClothCategory = async (req: Request, res: Response) => {
-  try {
-    const { categoryName, luxury, description } = req.body;
-    if (!categoryName) {
-      return res.status(400).json({ message: "categoryName is required" });
-    }
+export const addCloth = async (req: Request, res: Response) => {
+  const clothData = req.body;
 
-    const newCategory = new Category({ categoryName, luxury, description });
-
-    if (!newCategory) {
-      new customError("Category creation failed", 400);
-    }
-    res.status(201).json({ message: "Category created", data: newCategory });
-  } catch (error: any) {
-    res.status(500).json({ message: "Server Error", error: error.message });
+  if (
+    !clothData.clothName ||
+    !clothData.size ||
+    !clothData.color ||
+    !clothData.price ||
+    !clothData.disCount ||
+    !clothData.brand ||
+    !clothData.material ||
+    !clothData.rating ||
+    !clothData.stock ||
+    !clothData.description ||
+    !clothData.categoryId
+  ) {
+    throw new customError("All fields are required", 400);
   }
+
+  const newCloth = await Clothes.create(clothData);
+
+  if (!newCloth) {
+    throw new customError("Failed to create cloth", 500);
+  }
+
+  res.status(201).json({
+    success: true,
+    message: "Cloth created successfully",
+    data: newCloth,
+  });
 };
