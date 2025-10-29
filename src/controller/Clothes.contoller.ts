@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import customError from "../middleware/customError.middleware";
 import Clothes from "../model/Clothes.model";
+import Category from "../model/ClothCategory.model";
 
 export const addCloth = async (req: Request, res: Response) => {
   const clothData = req.body;
@@ -20,11 +21,19 @@ export const addCloth = async (req: Request, res: Response) => {
     throw new customError("All fields are required", 400);
   }
 
+  const category = await Category.findById(clothData.categoryId);
+  if (!category) {
+    throw new customError("Invalid category ID", 400);
+  }
+
   const newCloth = await Clothes.create(clothData);
 
   if (!newCloth) {
     throw new customError("Failed to create cloth", 500);
   }
+
+  category.clothes.push(newCloth._id);
+  await category.save();
 
   res.status(201).json({
     success: true,
