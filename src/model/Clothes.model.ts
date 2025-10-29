@@ -26,10 +26,12 @@ const clothsSchema = new mongoose.Schema({
     max: [100, "Maximum lenght of cloth name exceeded."],
   },
   material: { type: "string", required: true },
-  rating: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "rating",
-  },
+  rating: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "rating",
+    },
+  ],
   stock: { type: "number", required: true },
   description: {
     type: "string",

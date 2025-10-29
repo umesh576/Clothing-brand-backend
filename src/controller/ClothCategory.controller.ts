@@ -26,7 +26,7 @@ export const CreateClothCategory = async (req: Request, res: Response) => {
 
 export const GetAllClothCategories = async (req: Request, res: Response) => {
   try {
-    const clothes = await Category.find().populate("clothes");
+    const clothes = await Category.find();
     res
       .status(200)
       .json({ message: "Clothes are fetched sucessfully", data: clothes });
