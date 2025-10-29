@@ -80,3 +80,32 @@ export const getClothById = async (req: Request, res: Response) => {
     data: cloth,
   });
 };
+
+export const deleteClothById = async (req: Request, res: Response) => {
+  const clothId = req.params.id;
+  const deletedCloth = await Clothes.findByIdAndDelete(clothId);
+  if (!deletedCloth) {
+    throw new customError("Cloth not found", 404);
+  }
+  res.status(200).json({
+    success: true,
+    message: "Cloth deleted successfully",
+    data: deletedCloth,
+  });
+};
+
+export const updateClothById = async (req: Request, res: Response) => {
+  const clothId = req.params.id;
+  const updateData = req.body;
+  const updatedCloth = await Clothes.findByIdAndUpdate(clothId, updateData, {
+    new: true,
+  });
+  if (!updatedCloth) {
+    throw new customError("Cloth not found", 404);
+  }
+  res.status(200).json({
+    success: true,
+    message: "Cloth updated successfully",
+    data: updatedCloth,
+  });
+};
