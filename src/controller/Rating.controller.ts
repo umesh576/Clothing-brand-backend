@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Rating from "../model/Rating.model";
+import Clothes from "../model/Clothes.model";
 
 export const addRating = async (req: Request, res: Response) => {
   try {
@@ -11,12 +12,21 @@ export const addRating = async (req: Request, res: Response) => {
         .json({ message: "userId, clothId and ratingValue are required" });
     }
 
+    const cloth = await Clothes.findById(clothId);
+    if (!cloth) {
+      return res.status(404).json({ message: "Cloth not found" });
+    }
+
     const rating = await Rating.create({
       userId,
       clothId,
       ratingValue,
       review,
     });
+
+    cloth.rating.push(rating._id);
+    await cloth.save();
+
     if (!rating) {
       return res.status(400).json({ message: "Failed to add rating" });
     }
