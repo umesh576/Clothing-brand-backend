@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Rating from "../model/Rating.model";
 import Clothes from "../model/Clothes.model";
+import customError from "../middleware/customError.middleware";
 
 // finalize addRating function
 export const addRating = async (req: Request, res: Response) => {
@@ -70,8 +71,11 @@ export const getRatings = async (req: Request, res: Response) => {
     }
 
     const ratings = await Rating.find({ filter })
-      .populate("userId", "name")
-      .populate("clothId", "name");
+      // .populate("userId", "name")
+      // .populate("clothId", "name");
+      if(ratings.length ==0 ){
+        throw new customError("No rating found.",400);
+      }
     res.status(200).json({ message: "Ratings fetched", data: ratings });
   } catch (error: any) {
     res.status(500).json({ message: "Server Error", error: error.message });

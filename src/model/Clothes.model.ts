@@ -14,25 +14,47 @@ const clothsSchema = new mongoose.Schema({
     required: true,
   },
 
-  size: { type: "string", required: [true, "Size must be required."] },
+  size: {
+    type: "string",
+    required: [true, "Size must be required."],
+    min: [1, "Minimun Size is more than 1."],
+  },
+
   color: { type: "string", required: true, trim: true },
+
   price: { type: "number", required: true },
-  totalPrice: { type: "number" },
-  disCount: { type: "number", required: true },
+
+  totalPrice: {
+    type: "number",
+    min: [0, "Minimun price is 0."],
+    required: [true, "Total price is required."],
+  },
+
+  disCount: {
+    type: "number",
+    required: false,
+    min: [1, "Discount is more than 1%."],
+    max: [100, "Discount is not more than 100%."],
+  },
+
   brand: {
     type: "string",
     required: true,
     min: [3, "Minimun lenght of cloth name must be 3 character."],
     max: [100, "Maximum lenght of cloth name exceeded."],
   },
+
   material: { type: "string", required: true },
+
   rating: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "rating",
     },
   ],
+
   stock: { type: "number", required: true },
+
   description: {
     type: "string",
     required: true,
