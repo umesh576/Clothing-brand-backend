@@ -50,6 +50,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // cart: [
+    //   {
+    //     cartId: {
+    //       type: mongoose.Schema.Types.ObjectId,
+    //       required: [true, "ClothId is required."],
+    //     },
+    //   },
+    // ],
   },
   { timestamps: true }
 );

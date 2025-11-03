@@ -48,49 +48,42 @@ export const addRating = async (req: Request, res: Response) => {
   }
 };
 
-//pending to optimize
-export const getRatings = async (req: Request, res: Response) => {
+//finalize to optimize
+export const getAllRatings = async (req: Request, res: Response) => {
+  const filter: any = {};
   try {
     const query = req.query;
 
-    const filter: any = {};
-
     // Add filtering based on query parameters
-    if (query.userId) {
+    if (query.userId || query.clothId || query.minRating || query.maxRating) {
       filter.userId = query.userId;
-    }
-    if (query.clothId) {
       filter.clothId = query.clothId;
-    }
-    if (query.minRating) {
       filter.ratingValue = { $gte: Number(query.minRating) };
-    }
-    if (query.maxRating) {
-      filter.ratingValue = filter.ratingValue || {};
       filter.ratingValue.$lte = Number(query.maxRating);
+      filter.ratingValue = filter.ratingValue || {};
     }
 
-    const ratings = await Rating.find({ filter })
-      // .populate("userId", "name")
-      // .populate("clothId", "name");
-      if(ratings.length ==0 ){
-        throw new customError("No rating found.",400);
-      }
+    const ratings = await Rating.find(filter);
+
+    if (ratings.length == 0) {
+      throw new customError("No rating found.", 400);
+    }
     res.status(200).json({ message: "Ratings fetched", data: ratings });
   } catch (error: any) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
-//pending to optimize
+//finalize to optimize
 export const getRatingsByCloth = async (req: Request, res: Response) => {
   try {
     const { clothId } = req.params;
-    const ratings = await Rating.find({ clothId })
-      .populate("userId", "name")
-      .populate("clothId", "name");
+    const ratings = await Rating.find({ clothId });
 
-    if (ratings.length == 0) {
+    // .populate("userId", "name")
+    // .populate("clothId", "name");
+
+    if (!ratings) {
       return res
         .status(404)
         .json({ message: "No ratings found for this cloth" });
